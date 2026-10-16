@@ -1,0 +1,9 @@
+{
+  "appId": "de.n8tixx.app",
+  "appName": "Techno Bavaria",
+  "webDir": "www",
+  "backgroundColor": "#07090F",
+  "server": { "url": "https://techno-bavaria.de", "cleartext": false },
+  "ios": { "contentInset": "always", "limitsNavigationsToAppBoundDomains": false, "appendUserAgent": "TechnoBavariaApp/1.0", "scheme": "Techno Bavaria" },
+  "plugins": { "SplashScreen": { "launchAutoHide": true, "launchShowDuration": 800, "backgroundColor": "#07090F" } }
+}
