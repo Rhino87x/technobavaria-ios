@@ -56,9 +56,7 @@ jobs:
           xcodebuild archive \
             -workspace ios/App/App.xcworkspace -scheme App -configuration Release \
             -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/App.xcarchive" \
-            CODE_SIGN_IDENTITY="-" CODE_SIGNING_REQUIRED=NO CODE_SIGN_ENTITLEMENTS=App/App.entitlements
-          echo "--- Entitlements im Archiv ---"
-          codesign -d --entitlements :- "$RUNNER_TEMP/App.xcarchive/Products/Applications/App.app" || true
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
 
       - name: Exportieren und zu TestFlight hochladen
         env:
@@ -73,7 +71,7 @@ jobs:
             <key>method</key><string>app-store-connect</string>
             <key>teamID</key><string>${TEAM}</string>
             <key>signingStyle</key><string>automatic</string>
-            <key>destination</key><string>upload</string>
+            <key>destination</key><string>export</string>
             <key>uploadSymbols</key><true/>
           </dict></plist>
           PLIST
@@ -84,3 +82,16 @@ jobs:
             -allowProvisioningUpdates \
             -authenticationKeyPath "$RUNNER_TEMP/keys/AuthKey_${KEY_ID}.p8" \
             -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER"
+          echo "--- Entitlements in der signierten IPA ---"
+          cd "$RUNNER_TEMP/export" && ls
+          unzip -q -o *.ipa -d unz
+          codesign -d --entitlements :- unz/Payload/App.app 2>&1 | tee ent.txt
+          grep -q "aps-environment" ent.txt || { echo "::error::aps-environment fehlt in der IPA"; exit 1; }
+      - name: Zu TestFlight hochladen
+        env:
+          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          ISSUER: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          mkdir -p ~/.appstoreconnect/private_keys
+          cp "$RUNNER_TEMP/keys/AuthKey_${KEY_ID}.p8" ~/.appstoreconnect/private_keys/
+          xcrun altool --upload-app -f "$RUNNER_TEMP/export/App.ipa" -t ios --apiKey "$KEY_ID" --apiIssuer "$ISSUER"
