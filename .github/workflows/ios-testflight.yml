@@ -58,7 +58,14 @@ jobs:
             -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/App.xcarchive" \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
 
-      - name: Exportieren und zu TestFlight hochladen
+      - name: Entitlements (Push) ins Archiv einsetzen
+        run: |
+          APP="$RUNNER_TEMP/App.xcarchive/Products/Applications/App.app"
+          find "$APP" -name "*.framework" -maxdepth 3 -exec codesign --force --sign - {} \; || true
+          codesign --force --sign - --entitlements ios/App/App/App.entitlements "$APP"
+          codesign -d --entitlements :- "$APP"
+
+      - name: Exportieren (signieren)
         env:
           TEAM: ${{ secrets.APPLE_TEAM_ID }}
           KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
