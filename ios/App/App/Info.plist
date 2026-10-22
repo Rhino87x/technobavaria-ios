@@ -35,6 +35,16 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Techno Bavaria nutzt die Kamera, um Fotos für dein Profil oder Beiträge aufzunehmen und am Einlass Ticket-QR-Codes zu scannen.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Techno Bavaria greift auf deine Fotos zu, damit du Bilder für dein Profil, Beiträge oder Event-Galerien auswählen kannst.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Techno Bavaria speichert Tickets und Event-Fotos auf Wunsch in deiner Fotomediathek.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Techno Bavaria nutzt das Mikrofon für die Spracheingabe im KI-Berater.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Techno Bavaria wandelt deine Spracheingabe im KI-Berater in Text um.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
