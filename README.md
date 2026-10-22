@@ -28,4 +28,6 @@ App Store Connect → App → App-Informationen → Name: „Techno Bavaria". Da
 
 - Google-/Facebook-Login sind in der App ausgeblendet (Google blockiert Logins in eingebetteten Browsern; Apple verlangt dann „Mit Apple anmelden"). In der App gilt E-Mail-Login.
 - Der Browser-User-Agent enthält `TechnoBavariaApp`; die Website erkennt daran die App.
-- Konto-Löschung: Apple verlangt sie in der App. Aktuell läuft sie über Datenschutz-Center → Anfrage.
+- Konto-Löschung: direkt in der App unter Profil → „Datenschutz & Konto löschen“ (sofortige Löschung mit Bestätigung „LÖSCHEN“).
+- Social-Logins werden nur angezeigt, wenn der Anbieter in Supabase aktiviert ist (aktuell keiner aktiv → nur E-Mail-Login).
+- App-Icon: `ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png` (1024×1024, ohne Transparenz; Quelle: technobavaria/mobile/resources/app-icon-1024.png).
