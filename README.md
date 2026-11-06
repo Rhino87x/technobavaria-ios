@@ -31,3 +31,5 @@ App Store Connect → App → App-Informationen → Name: „Techno Bavaria". Da
 - Konto-Löschung: direkt in der App unter Profil → „Datenschutz & Konto löschen“ (sofortige Löschung mit Bestätigung „LÖSCHEN“).
 - Social-Logins werden nur angezeigt, wenn der Anbieter in Supabase aktiviert ist (aktuell keiner aktiv → nur E-Mail-Login).
 - App-Icon: `ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png` (1024×1024, ohne Transparenz; Quelle: technobavaria/mobile/resources/app-icon-1024.png).
+
+- Spracheingabe (KI-Berater): native iOS-Spracherkennung über `@capacitor-community/speech-recognition`; die Website nutzt sie automatisch, wenn sie in der App läuft. Fragt beim ersten Tippen auf das Mikrofon nach Mikrofon- und Spracherkennungs-Erlaubnis.
