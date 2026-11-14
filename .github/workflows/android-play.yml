@@ -1,0 +1,97 @@
+name: Android → Google Play (AAB)
+
+# Baut die Techno-Bavaria-Android-App als signiertes App Bundle (.aab) für den Google Play Store.
+# Manuell starten: GitHub → Actions → "Android → Google Play (AAB)" → Run workflow.
+# Ergebnis: Artefakt "techno-bavaria-aab" (unten auf der Lauf-Seite) → in der Play Console hochladen.
+#
+# Upload-Schlüssel:
+# - Secret ANDROID_KEYSTORE_PASSWORD muss gesetzt sein (selbst ausgedachtes, langes Passwort).
+# - Ist zusätzlich ANDROID_KEYSTORE_BASE64 gesetzt, wird dieser Schlüssel benutzt.
+# - Fehlt ANDROID_KEYSTORE_BASE64 (allererster Lauf), erzeugt der Lauf einen neuen Upload-Schlüssel und legt ihn
+#   3 Tage lang als Artefakt "upload-schluessel" ab. Diesen herunterladen, sicher aufbewahren und als Secret
+#   ANDROID_KEYSTORE_BASE64 (Inhalt der Datei upload-keystore.base64.txt) eintragen – sonst entsteht beim nächsten
+#   Lauf ein anderer Schlüssel und Google lehnt das Update ab.
+on:
+  workflow_dispatch:
+    inputs:
+      version_name:
+        description: 'Versionsname (für Nutzer sichtbar)'
+        required: false
+        default: '2.1'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Android SDK (Plattform 36)
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;36.0.0" > /dev/null
+
+      - name: Abhängigkeiten und Capacitor-Sync
+        run: |
+          npm ci
+          npx cap sync android
+
+      - name: Upload-Schlüssel bereitstellen
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_PASSWORD" ]; then
+            echo "::error::Secret ANDROID_KEYSTORE_PASSWORD fehlt (GitHub → Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
+          mkdir -p "$RUNNER_TEMP/key"
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/key/upload-keystore.jks"
+            echo "Vorhandener Upload-Schlüssel wird benutzt."
+          else
+            keytool -genkeypair -keystore "$RUNNER_TEMP/key/upload-keystore.jks" -alias upload \
+              -keyalg RSA -keysize 4096 -validity 10000 \
+              -storepass "$KEYSTORE_PASSWORD" -keypass "$KEYSTORE_PASSWORD" \
+              -dname "CN=Universal Event GmbH, O=Universal Event GmbH, L=Muenchen, C=DE"
+            base64 -w0 "$RUNNER_TEMP/key/upload-keystore.jks" > "$RUNNER_TEMP/key/upload-keystore.base64.txt"
+            echo "NEW_KEY=1" >> "$GITHUB_ENV"
+            echo "::warning::Neuer Upload-Schlüssel erzeugt – Artefakt 'upload-schluessel' herunterladen und als Secret ANDROID_KEYSTORE_BASE64 eintragen!"
+          fi
+          echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/key/upload-keystore.jks" >> "$GITHUB_ENV"
+
+      - name: App Bundle bauen
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_VERSION_CODE: ${{ github.run_number }}
+          ANDROID_VERSION_NAME: ${{ inputs.version_name || '2.1' }}
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew bundleRelease --no-daemon
+          ls -la app/build/outputs/bundle/release/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: techno-bavaria-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          retention-days: 30
+
+      - name: Neuen Upload-Schlüssel ablegen (nur beim ersten Lauf)
+        if: env.NEW_KEY == '1'
+        uses: actions/upload-artifact@v4
+        with:
+          name: upload-schluessel
+          path: |
+            ${{ runner.temp }}/key/upload-keystore.jks
+            ${{ runner.temp }}/key/upload-keystore.base64.txt
+          retention-days: 3

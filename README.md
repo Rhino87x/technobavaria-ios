@@ -33,3 +33,35 @@ App Store Connect → App → App-Informationen → Name: „Techno Bavaria". Da
 - App-Icon: `ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png` (1024×1024, ohne Transparenz; Quelle: technobavaria/mobile/resources/app-icon-1024.png).
 
 - Spracheingabe (KI-Berater): native iOS-Spracherkennung über `@capacitor-community/speech-recognition`; die Website nutzt sie automatisch, wenn sie in der App läuft. Fragt beim ersten Tippen auf das Mikrofon nach Mikrofon- und Spracherkennungs-Erlaubnis.
+
+---
+
+# Techno Bavaria – Android-App (Google Play)
+
+Gleiche Hülle wie iOS (Capacitor, lädt https://techno-bavaria.de), Projekt im Ordner `android/`.
+Paketname (dauerhaft, nicht mehr änderbar nach dem ersten Upload): **`de.technobavaria.app`**. Ziel-API 36.
+
+## Einmalige Einrichtung
+
+1. **Google Play Console** (play.google.com/console) als **Organisation** registrieren (einmalig 25 US-$).
+   Für Organisationen verlangt Google eine **D-U-N-S-Nummer** der Universal Event GmbH (kostenlos bei Dun & Bradstreet, dauert einige Tage).
+   Vorteil Organisation: kein Pflicht-Test mit 12 Testern über 14 Tage (gilt nur für private Konten).
+2. **GitHub** → Repo Rhino87x/technobavaria-ios → Settings → Secrets and variables → Actions → Secret
+   `ANDROID_KEYSTORE_PASSWORD` = selbst ausgedachtes, langes Passwort (gut aufbewahren!).
+3. **Erster Build**: Actions → „Android → Google Play (AAB)" → Run workflow.
+   Beim ersten Lauf wird ein **Upload-Schlüssel** erzeugt (Artefakt „upload-schluessel", 3 Tage verfügbar):
+   herunterladen, sicher speichern und den Inhalt von `upload-keystore.base64.txt` als Secret `ANDROID_KEYSTORE_BASE64` eintragen.
+   Ohne diesen Schritt entsteht beim nächsten Lauf ein anderer Schlüssel und Google lehnt Updates ab.
+4. **Play Console** → App erstellen („Techno Bavaria", Deutsch, App, kostenlos) → Release → Produktion (oder zuerst „Interner Test")
+   → Artefakt „techno-bavaria-aab" (`app-release.aab`) hochladen. „Play App Signing" aktiviert lassen.
+
+## Updates
+
+Workflow erneut starten → neues AAB hochladen. Die Versionsnummer (versionCode) zählt automatisch hoch.
+Inhaltliche Änderungen an der Website brauchen kein App-Update.
+
+## Hinweise
+
+- Push-Benachrichtigungen sind auf Android noch aus (brauchen Firebase Cloud Messaging; später nachrüstbar).
+- Google-/Facebook-Login bleiben in der App ausgeblendet (Google blockiert Logins in eingebetteten WebViews).
+- Store-Grafiken (Icon 512×512, Feature-Grafik 1024×500, Screenshots 1080×1920) werden separat bereitgestellt.

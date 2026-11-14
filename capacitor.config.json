@@ -3,7 +3,35 @@
   "appName": "Techno Bavaria",
   "webDir": "www",
   "backgroundColor": "#07090F",
-  "server": { "url": "https://techno-bavaria.de", "cleartext": false },
-  "ios": { "contentInset": "always", "limitsNavigationsToAppBoundDomains": false, "appendUserAgent": "TechnoBavariaApp/1.0", "scheme": "Techno Bavaria" },
-  "plugins": { "SplashScreen": { "launchAutoHide": true, "launchShowDuration": 800, "backgroundColor": "#07090F" } }
+  "server": {
+    "url": "https://techno-bavaria.de",
+    "cleartext": false
+  },
+  "ios": {
+    "contentInset": "always",
+    "limitsNavigationsToAppBoundDomains": false,
+    "appendUserAgent": "TechnoBavariaApp/1.0",
+    "scheme": "Techno Bavaria"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": true,
+      "launchShowDuration": 800,
+      "backgroundColor": "#07090F"
+    }
+  },
+  "android": {
+    "appendUserAgent": "TechnoBavariaApp/1.0",
+    "backgroundColor": "#07090F",
+    "allowMixedContent": false,
+    "includePlugins": [
+      "@capacitor-community/speech-recognition",
+      "@capacitor/app",
+      "@capacitor/browser",
+      "@capacitor/share",
+      "@capacitor/splash-screen",
+      "@capacitor/status-bar"
+    ],
+    "adjustMarginsForEdgeToEdge": "force"
+  }
 }
