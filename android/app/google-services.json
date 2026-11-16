@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "742938989239",
+    "project_id": "technobavaria",
+    "storage_bucket": "technobavaria.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:742938989239:android:b97f091ae5550542747332",
+        "android_client_info": {
+          "package_name": "de.technobavaria.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBd39YCLZ6gRz1lUiBfTtehkCvVMCM7Z18"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

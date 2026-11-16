@@ -18,16 +18,24 @@
       "launchAutoHide": true,
       "launchShowDuration": 800,
       "backgroundColor": "#07090F"
+    },
+    "PushNotifications": {
+      "presentationOptions": [
+        "badge",
+        "sound",
+        "alert"
+      ]
     }
   },
   "android": {
-    "appendUserAgent": "TechnoBavariaApp/1.0",
+    "appendUserAgent": "TechnoBavariaApp/2.2 Android",
     "backgroundColor": "#07090F",
     "allowMixedContent": false,
     "includePlugins": [
       "@capacitor-community/speech-recognition",
       "@capacitor/app",
       "@capacitor/browser",
+      "@capacitor/push-notifications",
       "@capacitor/share",
       "@capacitor/splash-screen",
       "@capacitor/status-bar"
